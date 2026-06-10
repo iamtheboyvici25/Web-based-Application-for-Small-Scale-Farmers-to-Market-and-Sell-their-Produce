@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Forms\LoginForm;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -20,7 +21,15 @@ new #[Layout('layouts.guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        // Map them to their secure dashboard based on database status
+        $redirectUrl = match (Auth::user()->role) {
+            'admin'  => route('admin.dashboard', absolute: false),
+            'farmer' => route('farmer.dashboard', absolute: false),
+            'buyer'  => route('buyer.dashboard', absolute: false),
+            default  => '/',
+        };
+
+        $this->redirectIntended(default: $redirectUrl, navigate: true);
     }
 }; ?>
 

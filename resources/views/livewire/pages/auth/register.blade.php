@@ -14,25 +14,40 @@ new #[Layout('layouts.guest')] class extends Component
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+    
+    // 1. Add the role property (defaults to buyer)
+    public string $role = 'buyer';
 
     /**
      * Handle an incoming registration request.
      */
     public function register(): void
     {
+        // 2. Validate the incoming data, including the new role field
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:buyer,farmer'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
-        event(new Registered($user = User::create($validated)));
+        // 3. Create the user
+        $user = User::create($validated);
+
+        event(new Registered($user));
 
         Auth::login($user);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        // 4. Secure dynamic redirection based on their role
+        $redirectUrl = match ($user->role) {
+            'farmer' => '/farmer/dashboard',
+            'buyer'  => '/buyer/dashboard',
+            default  => '/dashboard',
+        };
+
+        $this->redirect($redirectUrl, navigate: true);
     }
 }; ?>
 
@@ -50,6 +65,16 @@ new #[Layout('layouts.guest')] class extends Component
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- Role Selection -->
+         <div class="mt-4">
+            <x-input-label for="role" :value="__('Register As')" />
+            <select id="role" wire:model="role" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>
+                <option value="buyer">Buyer (I want to buy produce)</option>
+                <option value="farmer">Farmer (I want to sell produce)</option>
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
         <!-- Password -->
