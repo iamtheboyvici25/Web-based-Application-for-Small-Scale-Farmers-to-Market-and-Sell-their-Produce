@@ -29,6 +29,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 4. Shared Profile Route (Add this line!)
     Route::view('/profile', 'profile')
         ->name('profile');
+
+        // 4. Shared Profile Route
+    Route::view('/profile', 'profile')->name('profile');
+
+    // 5. Shared Messaging System Route (Add this line!)
+    Route::get('/messages/{listing?}', \App\Livewire\Messages::class)->name('messages');
 });
 
 // Include default Breeze auth routes

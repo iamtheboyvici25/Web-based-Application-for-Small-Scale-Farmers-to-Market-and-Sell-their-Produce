@@ -18,7 +18,7 @@ class Dashboard extends Component
     #[Validate('required|string')]
     public $description = '';
 
-    #[Validate('required|numeric|min:0')]
+    #[Validate('required|numeric|gt:0')]
     public $price = '';
 
     #[Validate('required|integer|min:1')]

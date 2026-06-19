@@ -35,6 +35,12 @@ new class extends Component
     </x-nav-link>
 </div>
 
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="route('messages')" :active="request()->routeIs('messages')" wire:navigate>
+        {{ __('Messages') }}
+    </x-nav-link>
+</div>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">

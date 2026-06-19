@@ -39,6 +39,22 @@ class User extends Authenticatable
         return $this->hasMany(Listing::class);
     }
 
+    /**
+     * Messages this user has sent.
+     */
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    /**
+     * Messages this user has received.
+     */
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

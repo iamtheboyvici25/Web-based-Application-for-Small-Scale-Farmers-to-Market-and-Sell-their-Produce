@@ -33,7 +33,7 @@
                     <div class="flex gap-4">
                         <div class="w-1/2">
                             <x-input-label for="price" :value="__('Price (Ksh)')" />
-                            <x-text-input id="price" wire:model="price" type="number" step="0.01" class="block mt-1 w-full" required />
+                            <x-text-input id="price" wire:model="price" type="number" step="0.01" min="1" class="block mt-1 w-full" required />
                             <x-input-error :messages="$errors->get('price')" class="mt-2" />
                         </div>
                         <div class="w-1/2">
