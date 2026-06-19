@@ -11,11 +11,10 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
-    // Form properties with built-in validation rules
     #[Validate('required|string|max:255')]
     public $title = '';
 
-    #[Validate('required|string')]
+    #[Validate('required|string|max:1000')]
     public $description = '';
 
     #[Validate('required|numeric|gt:0')]
@@ -24,49 +23,83 @@ class Dashboard extends Component
     #[Validate('required|integer|min:1')]
     public $quantity = '';
 
-    #[Validate('required|string|max:50')]
-    public $unit = 'kg';
+    #[Validate('required|string')]
+    public $unit = 'KG';
 
-    // The Create Action
+    // EDIT MODE PROPERTIES (Add these lines)
+    public $isEditing = false;
+    public $editingListingId = null;
+
+    // Triggers when the farmer clicks "Edit" next to an item
+    public function editListing(Listing $listing)
+    {
+        // Security check: Make sure this farmer actually owns this listing
+        if ($listing->user_id !== Auth::id()) return;
+
+        $this->isEditing = true;
+        $this->editingListingId = $listing->id;
+
+        // Populate the input fields with current database data
+        $this->title = $listing->title;
+        $this->description = $listing->description;
+        $this->price = $listing->price;
+        $this->quantity = $listing->quantity;
+        $this->unit = $listing->unit;
+    }
+
+    // Cancels edit mode and clears the form
+    public function cancelEdit()
+    {
+        $this->reset(['title', 'description', 'price', 'quantity', 'unit', 'isEditing', 'editingListingId']);
+    }
+
+    // Handles BOTH creating and updating to save space
+   // Handles BOTH creating and updating to save space
     public function save()
     {
         $this->validate();
+        // ...
 
-        // Create a new listing tied automatically to the logged-in farmer
-        Auth::user()->listings()->create([
-            'title' => $this->title,
-            'description' => $this->description,
-            'price' => $this->price,
-            'quantity' => $this->quantity,
-            'unit' => $this->unit,
-        ]);
-
-        session()->flash('message', 'Produce listed successfully!');
-
-        // Clear the form fields after saving
-        $this->reset(['title', 'description', 'price', 'quantity', 'unit']);
-    }
-
-    // The Delete Action
-    public function delete(Listing $listing)
-    {
-        // Security Check: Only allow deletion if the logged-in user owns this listing
-        if ($listing->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
+        if ($this->isEditing) {
+            $listing = Listing::find($this->editingListingId);
+            if ($listing && $listing->user_id === Auth::id()) {
+                $listing->update([
+                    'title' => $this->title,
+                    'description' => $this->description,
+                    'price' => $this->price,
+                    'quantity' => $this->quantity,
+                    'unit' => $this->unit,
+                ]);
+                session()->flash('message', 'Listing updated successfully!');
+            }
+        } else {
+            // Your original Create logic remains exactly the same:
+            Auth::user()->listings()->create([
+                'title' => $this->title,
+                'description' => $this->description,
+                'price' => $this->price,
+                'quantity' => $this->quantity,
+                'unit' => $this->unit,
+            ]);
+            session()->flash('message', 'Produce listed successfully!');
         }
 
-        $listing->delete();
-        session()->flash('message', 'Listing removed.');
+        $this->cancelEdit();
     }
 
-    // The Read Action
-    public function render()
+    public function deleteListing(Listing $listing)
     {
-        // Fetch only the listings belonging to this specific farmer, newest first
-        $listings = Auth::user()->listings()->latest()->get();
+        if ($listing->user_id === Auth::id()) {
+            $listing->delete();
+            session()->flash('message', 'Listing deleted successfully.');
+        }
+    }
 
+   public function render()
+    {
         return view('livewire.farmer.dashboard', [
-            'listings' => $listings,
+            // Change 'myListings' to 'listings' right here 👇
+            'listings' => Auth::user()->listings()->latest()->get()
         ]);
     }
 }

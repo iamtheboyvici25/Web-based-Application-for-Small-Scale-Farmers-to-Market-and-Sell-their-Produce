@@ -54,9 +54,17 @@
                         <x-input-error :messages="$errors->get('unit')" class="mt-2" />
                     </div>
 
-                    <x-primary-button class="w-full justify-center">
-                        {{ __('Post Listing') }}
-                    </x-primary-button>
+                  <div class="flex items-center gap-4 mt-6">
+    <x-primary-button>
+        {{ $isEditing ? __('Update Listing 🔄') : __('List Produce 🌾') }}
+    </x-primary-button>
+
+    @if($isEditing)
+        <button type="button" wire:click="cancelEdit" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold rounded-md transition">
+            Cancel
+        </button>
+    @endif
+</div>
                 </form>
             </div>
 
@@ -77,11 +85,17 @@
                                         <span>{{ $listing->quantity }} {{ Str::plural($listing->unit, $listing->quantity) }}</span>
                                     </div>
                                 </div>
-                                <div class="mt-4 pt-4 border-t dark:border-gray-700 flex justify-end">
-                                    <button wire:click="delete({{ $listing->id }})" wire:confirm="Are you sure you want to delete this listing?" class="text-red-600 hover:text-red-800 text-sm font-medium">
-                                        Delete
-                                    </button>
-                                </div>
+                                <div class="flex items-center space-x-2">
+    <!-- NEW EDIT BUTTON -->
+    <button wire:click="editListing({{ $listing->id }})" class="px-3 py-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold rounded transition">
+        Edit
+    </button>
+
+    <!-- YOUR EXISTING DELETE BUTTON -->
+    <button wire:click="deleteListing({{ $listing->id }})" wire:confirm="Are you sure?" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded transition">
+        Delete
+    </button>
+</div>
                             </div>
                         @endforeach
                     </div>
