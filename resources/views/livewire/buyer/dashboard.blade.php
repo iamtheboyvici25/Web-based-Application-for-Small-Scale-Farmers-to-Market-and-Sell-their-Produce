@@ -36,12 +36,41 @@
                             <div>
                                 <div class="h-40 bg-emerald-50 dark:bg-emerald-950/20 flex flex-col items-center justify-center border-b border-gray-100 dark:border-gray-700 relative">
                                     <span class="text-5xl mb-1">
-                                        @if(Str::contains(Str::lower($listing->title), ['tomato', 'pepper'])) 🍅
-                                        @elseif(Str::contains(Str::lower($listing->title), ['potato', 'cassava'])) 🥔
-                                        @elseif(Str::contains(Str::lower($listing->title), ['onion', 'garlic'])) 🧅
-                                        @elseif(Str::contains(Str::lower($listing->title), ['corn', 'maize'])) 🌽
-                                        @else 🥬
-                                        @endif
+                                       @php $title = Str::lower($listing->title); @endphp
+
+@if(Str::contains($title, ['tomato'])) 🍅
+@elseif(Str::contains($title, ['pepper', 'chili', 'capsicum', 'pilipili'])) 🌶️
+@elseif(Str::contains($title, ['potato', 'cassava', 'yam', 'sweet potato', 'nduma', 'arrowroot'])) 🥔
+@elseif(Str::contains($title, ['onion', 'leek', 'shallot', 'scallion'])) 🧅
+@elseif(Str::contains($title, ['garlic', 'kitunguu saumu'])) 🧄
+@elseif(Str::contains($title, ['corn', 'maize'])) 🌽
+@elseif(Str::contains($title, ['carrot'])) 🥕
+@elseif(Str::contains($title, ['broccoli', 'cauliflower'])) 🥦
+@elseif(Str::contains($title, ['cabbage', 'kale', 'spinach', 'sukuma', 'lettuce', 'greens'])) 🥬
+@elseif(Str::contains($title, ['eggplant', 'aubergine', 'brinjal'])) 🍆
+@elseif(Str::contains($title, ['pumpkin', 'squash', 'butternut'])) 🎃
+@elseif(Str::contains($title, ['cucumber', 'zucchini', 'courgette'])) 🥒
+@elseif(Str::contains($title, ['mushroom', 'fungi'])) 🍄
+@elseif(Str::contains($title, ['ginger', 'turmeric'])) 🫚
+@elseif(Str::contains($title, ['avocado', 'hass'])) 🥑
+@elseif(Str::contains($title, ['banana', 'plantain', 'ndizi'])) 🍌
+@elseif(Str::contains($title, ['apple'])) 🍎
+@elseif(Str::contains($title, ['pear'])) 🍐
+@elseif(Str::contains($title, ['orange', 'lemon', 'lime', 'citrus', 'tangerine', 'grapefruit'])) 🍊
+@elseif(Str::contains($title, ['mango'])) 🥭
+@elseif(Str::contains($title, ['watermelon', 'melon'])) 🍉
+@elseif(Str::contains($title, ['grape'])) 🍇
+@elseif(Str::contains($title, ['strawberry', 'berry', 'blueberry', 'raspberry', 'blackberry'])) 🍓
+@elseif(Str::contains($title, ['cherry'])) 🍒
+@elseif(Str::contains($title, ['peach', 'plum', 'apricot'])) 🍑
+@elseif(Str::contains($title, ['pineapple'])) 🍍
+@elseif(Str::contains($title, ['coconut', 'nazi'])) 🥥
+@elseif(Str::contains($title, ['kiwi'])) 🥝
+@elseif(Str::contains($title, ['papaya', 'pawpaw'])) 🍈
+@elseif(Str::contains($title, ['bean', 'pea', 'lentil', 'gram', 'njahi', 'soy', 'peanut', 'groundnut'])) 🫘
+@elseif(Str::contains($title, ['chestnut', 'macadamia', 'cashew', 'walnut', 'almond', 'nut'])) 🌰
+@else 📦
+@endif
                                     </span>
                                     <span class="absolute top-2 right-2 bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
                                         Verified Farmer
